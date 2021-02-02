@@ -26,8 +26,13 @@ import time
 
 app_start_stamp = time.time()
 
+basePath=""
+if os.getenv("BASE_PATH") != "None":
+        basePath=os.getenv("BASE_PATH")
+staticUrlPath="{}/static".format(basePath)
+
 os.chdir(config['app-location'])
-app = Flask(__name__, static_folder="static")
+app = Flask(__name__, static_folder="static", static_url_path=staticUrlPath)
 app.config['SQLALCHEMY_DATABASE_URI'] = config['database-uri']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Suppress the warning/no need this on for now.
 app.config['RATELIMIT_HEADERS_ENABLED'] = True
@@ -51,11 +56,11 @@ socketio.init_app(app, message_queue=config["redis-uri"], path='gateway', async_
 babel.init_app(app)
 redis_store.init_app(app)
 
-app.register_blueprint(api.api, url_prefix="/api", template_folder="/templates")
-app.register_blueprint(admin.admin, url_prefix="/admin", template_folder="/templates")
-app.register_blueprint(user.user, url_prefix="/user", template_folder="/templates")
-app.register_blueprint(embed.embed, url_prefix="/embed", template_folder="/templates")
-socketio.on_namespace(gateway.Gateway('/gateway'))
+app.register_blueprint(api.api, url_prefix="/titan-bot-webapp/api", template_folder="/templates")
+app.register_blueprint(admin.admin, url_prefix="/titan-bot-webapp/admin", template_folder="/templates")
+app.register_blueprint(user.user, url_prefix="/titan-bot-webapp/user", template_folder="/templates")
+app.register_blueprint(embed.embed, url_prefix="/titan-bot-webapp/embed", template_folder="/templates")
+socketio.on_namespace(gateway.Gateway('/titan-bot-webapp/gateway'))
 
 @babel.localeselector
 def get_locale():
@@ -64,27 +69,27 @@ def get_locale():
         return param_lang
     return request.accept_languages.best_match(language_code_list())
 
-@app.route("/")
+@app.route("{}/".format(basePath))
 def index():
     return render_template("index.html.j2")
 
-@app.route("/about")
+@app.route("{}/about".format(basePath))
 def about():
     return render_template("about.html.j2")
 
-@app.route("/terms")
+@app.route("{}/terms".format(basePath))
 def terms():
     return render_template("terms_and_conditions.html.j2")
 
-@app.route("/privacy")
+@app.route("{}/privacy".format(basePath))
 def privacy():
     return render_template("privacy_policy.html.j2")
 
-@app.route("/vote")
+@app.route("{}/vote".format(basePath))
 def vote():
     return render_template("discordbotsorg_vote.html.j2", referrer=request.args.get("referrer", None))
 
-@app.route("/global_banned_words")
+@app.route("{}/global_banned_words".format(basePath))
 def global_banned_words():
     return render_template("global_banned_words.html.j2")
 
