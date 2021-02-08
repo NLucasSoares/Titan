@@ -23,44 +23,44 @@
 /* global is_peak */
 /* global cookie_test_s2_URL */
 
-var passedCookieTest = true; // If passed cross origin test
+let passedCookieTest = true; // If passed cross origin test
 
 (function () {
-    const theme_options = ["DiscordDark", "FireWyvern", "IceWyvern", "MetroEdge", "BetterTitan"]; // All the avaliable theming names
-    const badges_options = ["administrator", "partner", "supporter", "discordbotsorgvoted"]; // All badges avaliable
+    const theme_options = ["DiscordDark", "FireWyvern", "IceWyvern", "MetroEdge", "BetterTitan"]; // All the available theming names
+    const badges_options = ["administrator", "partner", "supporter", "discordbotsorgvoted"]; // All badges available
     
-    var user_def_css; // Saves the user defined css
-    var has_already_been_initially_resized = false; // keep track if the embed initially been resized
-    var has_handled_noscroll = false; // Prevent scrolling to bottom of embed at load if false
-    var logintimer; // timer to keep track of user inactivity after hitting login
-    var last_message_id; // last message tracked
-    var selected_channel = null; // user selected channel
-    var guild_channels = {}; // all server channels used to highlight channels in messages
-    var emoji_store = []; // all server emojis
-    var current_username_discrim; // Current username/discrim pair, eg EndenDraogn#4151
-    var current_user_discord_id; // Current user discord snowflake id, eg mine is 140252024666062848
-    var visitor_mode = false; // Keep track of if using the visitor mode or authenticate mode
-    var socket = null; // Socket.io object
-    var socket_last_ack = null; // Socket.io last acknowledgement Moment obj
-    var socket_error_should_refetch = false; // If true, the next ack will trigger a http refetch if socket connected
-    var socket_identified = false; // identified/loggedin with socket
-    var authenticated_users_list = []; // List of all authenticated users
-    var unauthenticated_users_list = []; // List of all guest users
-    var discord_users_list = []; // List of all discord users that are probably online
-    var guild_channels_list = []; // guild channels, but as a list of them
-    var message_users_cache = {}; // {"name#discrim": {"data": {}, "msgs": []} Cache of the users fetched from websockets to paint the messages
-    var shift_pressed = false; // Track down if shift pressed on messagebox
-    var global_guest_icon = null; // Guest icon
-    var notification_sound = null; // Sound Manager 2 demonstrative.mp3 object https://notificationsounds.com/message-tones/demonstrative-516
-    var notification_sound_setting; // nothing, mentions, newmsgs - to control what new sound it makes
-    var display_richembeds; // true/false - if rich embeds should be displayed
-    var guild_roles_list = []; // List of all guild roles
-    var all_users = []; // List of all the users in guild
-    var is_dragging_chatcontainer = false; // Track if is dragging on chatcontainer (does not trigger messagebox focus) or not
-    var localstorage_avaliable = false; // Check if localstorage is avaliable on this browser
-    var shouldUtilizeGateway = false; // Don't connect to gateway until page is focused or has interaction.
-    var discord_users_list_enabled = false; // Allow automatic population of discord users list
-    var session = ""; // stores the session if cross origin requests are not honored
+    let user_def_css; // Saves the user defined css
+    let has_already_been_initially_resized = false; // keep track if the embed initially been resized
+    let has_handled_noscroll = false; // Prevent scrolling to bottom of embed at load if false
+    let logintimer; // timer to keep track of user inactivity after hitting login
+    let last_message_id; // last message tracked
+    let selected_channel = null; // user selected channel
+    let guild_channels = {}; // all server channels used to highlight channels in messages
+    let emoji_store = []; // all server emojis
+    let current_username_discrim; // Current username/discrim pair, eg EndenDraogn#4151
+    let current_user_discord_id; // Current user discord snowflake id, eg mine is 140252024666062848
+    let visitor_mode = false; // Keep track of if using the visitor mode or authenticate mode
+    let socket = null; // Socket.io object
+    let socket_last_ack = null; // Socket.io last acknowledgement Moment obj
+    let socket_error_should_refetch = false; // If true, the next ack will trigger a http refetch if socket connected
+    let socket_identified = false; // identified/loggedin with socket
+    let authenticated_users_list = []; // List of all authenticated users
+    let unauthenticated_users_list = []; // List of all guest users
+    let discord_users_list = []; // List of all discord users that are probably online
+    let guild_channels_list = []; // guild channels, but as a list of them
+    let message_users_cache = {}; // {"name#discrim": {"data": {}, "msgs": []} Cache of the users fetched from websockets to paint the messages
+    let shift_pressed = false; // Track down if shift pressed on messagebox
+    let global_guest_icon = null; // Guest icon
+    let notification_sound = null; // Sound Manager 2 demonstrative.mp3 object https://notificationsounds.com/message-tones/demonstrative-516
+    let notification_sound_setting; // nothing, mentions, newmsgs - to control what new sound it makes
+    let display_richembeds; // true/false - if rich embeds should be displayed
+    let guild_roles_list = []; // List of all guild roles
+    let all_users = []; // List of all the users in guild
+    let is_dragging_chatcontainer = false; // Track if is dragging on chatcontainer (does not trigger messagebox focus) or not
+    let localstorage_avalaible = false; // Check if localstorage is available on this browser
+    let shouldUtilizeGateway = false; // Don't connect to gateway until page is focused or has interaction.
+    let discord_users_list_enabled = false; // Allow automatic population of discord users list
+    let session = ""; // stores the session if cross origin requests are not honored
 
     function ajax_before_send(jqXHR, settings) {
         if (session && !passedCookieTest) {
@@ -75,10 +75,10 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function element_in_view(element, fullyInView) {
-        var pageTop = $(window).scrollTop();
-        var pageBottom = pageTop + $(window).height();
-        var elementTop = $(element).offset().top;
-        var elementBottom = elementTop + $(element).height();
+        let pageTop = $(window).scrollTop();
+        let pageBottom = pageTop + $(window).height();
+        let elementTop = $(element).offset().top;
+        let elementBottom = elementTop + $(element).height();
 
         if (fullyInView === true) {
             return ((pageTop < elementTop) && (pageBottom > elementBottom));
@@ -89,8 +89,8 @@ var passedCookieTest = true; // If passed cross origin test
     
     // https://stackoverflow.com/questions/2956966/javascript-telling-setinterval-to-only-fire-x-amount-of-times
     function setIntervalX(callback, delay, repetitions) {
-        var x = 0;
-        var intervalID = window.setInterval(function () {
+        let x = 0;
+        let intervalID = window.setInterval(function () {
     
            callback();
     
@@ -105,17 +105,17 @@ var passedCookieTest = true; // If passed cross origin test
     };
     
     function zeroPad(discrim) {
-        var str = "" + discrim;
-        var pad = "0000";
+        let str = "" + discrim;
+        let pad = "0000";
         return pad.substring(0, pad.length - str.length) + str;
     }
 
     function query_guild() {
-        var url = "/api/query_guild";
+        let url = "/api/query_guild";
         if (visitor_mode) {
             url = url += "_visitor";
         }
-        var funct = $.ajax({
+        let funct = $.ajax({
             dataType: "json",
             url: url,
             beforeSend: ajax_before_send,
@@ -126,7 +126,7 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function create_authenticated_user() {
-        var funct = $.ajax({
+        let funct = $.ajax({
             method: "POST",
             dataType: "json",
             url: "/api/create_authenticated_user",
@@ -138,7 +138,7 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function create_unauthenticated_user(username, captchaResponse) {
-        var funct = $.ajax({
+        let funct = $.ajax({
             method: "POST",
             dataType: "json",
             url: "/api/create_unauthenticated_user",
@@ -150,7 +150,7 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function change_unauthenticated_username(username) {
-        var funct = $.ajax({
+        let funct = $.ajax({
             method: "POST",
             dataType: "json",
             url: "/api/change_unauthenticated_username",
@@ -165,11 +165,11 @@ var passedCookieTest = true; // If passed cross origin test
         if (after === undefined) {
             after = null;
         }
-        var url = "/api/fetch";
+        let url = "/api/fetch";
         if (visitor_mode) {
             url += "_visitor";
         }
-        var funct = $.ajax({
+        let funct = $.ajax({
             method: "GET",
             dataType: "json",
             url: url,
@@ -181,11 +181,11 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function post(channel_id, content, file, richembed) {
-        if (content == "") {
+        if (content === "") {
             content = null;
         }
-        var data = null;
-        var ajaxobj = {
+        let data = null;
+        let ajaxobj = {
             method: "POST",
             dataType: "json",
             beforeSend: ajax_before_send,
@@ -203,7 +203,7 @@ var passedCookieTest = true; // If passed cross origin test
             ajaxobj.contentType = false;
             ajaxobj.processData = false;
             ajaxobj.xhr = function() {
-                var myXhr = $.ajaxSettings.xhr();
+                let myXhr = $.ajaxSettings.xhr();
                 if (myXhr.upload) {
                     // For handling the progress of the upload
                     myXhr.upload.addEventListener('progress', function(e) {
@@ -223,13 +223,13 @@ var passedCookieTest = true; // If passed cross origin test
             data = {"guild_id": guild_id, "channel_id": channel_id, "content": content};
         }
         ajaxobj.data = data;
-        var funct = $.ajax(ajaxobj);
+        let funct = $.ajax(ajaxobj);
         funct.always(ajax_always);
         return funct.promise();
     }
     
     function discord_embed() {
-        var funct = $.ajax({
+        let funct = $.ajax({
             dataType: "json",
             url: "https://discordapp.com/api/guilds/" + guild_id + "/widget.json",
         });
@@ -237,7 +237,7 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function api_user(user_id) {
-        var funct = $.ajax({
+        let funct = $.ajax({
             dataType: "json",
             beforeSend: ajax_before_send,
             url: "/api/user/" + guild_id + "/" + user_id,
@@ -247,7 +247,7 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function list_users() {
-        var funct = $.ajax({
+        let funct = $.ajax({
             dataType: "json",
             beforeSend: ajax_before_send,
             url: "/api/user/" + guild_id,
@@ -257,11 +257,11 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function server_members() {
-        var url = "/api/server_members";
+        let url = "/api/server_members";
         if (visitor_mode) {
             url = url += "_visitor";
         }
-        var funct = $.ajax({
+        let funct = $.ajax({
             dataType: "json",
             url: url,
             beforeSend: ajax_before_send,
@@ -272,14 +272,14 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function performLocalStorageTest() {
-        var test = 'test';
+        let test = 'test';
         try {
             localStorage.setItem(test, test);
             localStorage.removeItem(test);
-            localstorage_avaliable = true;
+            localstorage_avalaible = true;
             return true;
         } catch(e) {
-            localstorage_avaliable = false;
+            localstorage_avalaible = false;
             return false;
         }
     }
@@ -304,7 +304,7 @@ var passedCookieTest = true; // If passed cross origin test
     
     function isSameDomain() {
         try {
-            return location.hostname == parent.location.hostname;
+            return location.hostname === parent.location.hostname;
         } catch (e) {
             return false;
         }
@@ -384,7 +384,7 @@ var passedCookieTest = true; // If passed cross origin test
         });
         
         $("#members-btn").click(function () {
-            var sm = server_members();
+            let sm = server_members();
             sm.done(function (data) {
                 $("#members-spinner").hide();
                 discord_users_list_enabled = data.widgetenabled;
@@ -403,8 +403,8 @@ var passedCookieTest = true; // If passed cross origin test
         });
         
         $("#proceed_nsfw_btn").click(function () {
-            var channel_id = $("#proceed_nsfw_btn").attr("channel_id");
-            var should_animate = parseInt($("#proceed_nsfw_btn").attr("should_animate"));
+            let channel_id = $("#proceed_nsfw_btn").attr("channel_id");
+            let should_animate = parseInt($("#proceed_nsfw_btn").attr("should_animate"));
             $("#nsfwmodal").modal("close");
             select_channel(channel_id, should_animate, true);
         });
@@ -426,26 +426,26 @@ var passedCookieTest = true; // If passed cross origin test
         });
         
         $("#fileinput").change(function (e){
-            var files = e.target.files;
+            let files = e.target.files;
             if (files && files.length > 0) {
                 $("#messagebox-filemodal").val($("#messagebox").val());
                 $("#filename").text($("#fileinput")[0].files[0].name);
                 $("#filemodal").modal("open");
                 $("#messagebox-filemodal").focus();
-                var file = files[0];
-                var file_size = file.size;
-                var file_max_size = 4 * 1024 * 1024;
+                let file = files[0];
+                let file_size = file.size;
+                let file_max_size = 4 * 1024 * 1024;
                 if (file_size > file_max_size) {
                     $("#filemodal").modal("close");
                     Materialize.toast('Your file is too powerful! The maximum file size is 4 megabytes.', 5000);
                     return;
                 }
-                var name = file.name;
-                var extension = name.substr(-4).toLowerCase();
-                var image_extensions = [".png", ".jpg", ".jpeg", ".gif"];
+                let name = file.name;
+                let extension = name.substr(-4).toLowerCase();
+                let image_extensions = [".png", ".jpg", ".jpeg", ".gif"];
                 $("#filepreview").hide();
                 if (FileReader && image_extensions.indexOf(extension) > -1) {
-                    var reader = new FileReader();
+                    let reader = new FileReader();
                     reader.onload = function() {
                         $("#filepreview").show();
                         $("#filepreview")[0].src = reader.result;
@@ -477,12 +477,12 @@ var passedCookieTest = true; // If passed cross origin test
         });
 
         $("#richembedmodal_addfield_btn").click(function () {
-            var count = $("#richembedmodal-fields > .row").length;
+            let count = $("#richembedmodal-fields > .row").length;
             if (count >= 10) {
                 $("#richembedmodal_addfield_btn").addClass("disabled");
                 return;
             }
-            var template = $($("#mustache_richembedfieldinput").html());
+            let template = $($("#mustache_richembedfieldinput").html());
             $("#richembedmodal-fields").append(template);
             template.find("input.name").keyup(function () {
                 genPreviewPopulateRichEmbed();
@@ -502,13 +502,13 @@ var passedCookieTest = true; // If passed cross origin test
         });
         
         $( "#theme-selector" ).change(function () {
-            var theme = $("#theme-selector option:selected").val();
-            var keep_custom_css = $("#overwrite_theme_custom_css_checkbox").is(':checked');
+            let theme = $("#theme-selector option:selected").val();
+            let keep_custom_css = $("#overwrite_theme_custom_css_checkbox").is(':checked');
             changeTheme(theme, keep_custom_css);
         });
         
         $("#overwrite_theme_custom_css_checkbox").change(function () {
-            var keep_custom_css = $("#overwrite_theme_custom_css_checkbox").is(':checked');
+            let keep_custom_css = $("#overwrite_theme_custom_css_checkbox").is(':checked');
             changeTheme(null, keep_custom_css);
         });
         
@@ -525,13 +525,13 @@ var passedCookieTest = true; // If passed cross origin test
         wdtEmojiBundle.defaults.emojiType = 'twitter';
         wdtEmojiBundle.init('#messagebox');
         
-        var themeparam = getParameterByName('theme');
-        var localstore_theme = "";
-        if (localstorage_avaliable) {
+        let themeparam = getParameterByName('theme');
+        let localstore_theme = "";
+        if (localstorage_avalaible) {
             localstore_theme = localStorage.getItem("theme");
         }
         if ((themeparam && $.inArray(themeparam, theme_options) != -1) || (localstore_theme)) {
-            var theme;
+            let theme;
             if (themeparam) {
                 theme = themeparam;
             } else {
@@ -546,8 +546,8 @@ var passedCookieTest = true; // If passed cross origin test
         $("[name=notification_sound_radiobtn]").click(function (event) {
             changeNotificationSound(event.target.value);
         });
-        var localstore_notification_sound = "";
-        if (localstorage_avaliable) {
+        let localstore_notification_sound = "";
+        if (localstorage_avalaible) {
             localstore_notification_sound = localStorage.getItem("notification_sound");
         }
         if (localstore_notification_sound) {
@@ -563,22 +563,22 @@ var passedCookieTest = true; // If passed cross origin test
         });
         
         $("[name=richembed_toggle_radiobtn]").click(function (event) {
-            display_richembeds = event.target.value == "true";
+            display_richembeds = event.target.value === "true";
             localStorage.setItem("display_richembeds", display_richembeds);
             $("[name=richembed_toggle_radiobtn][value=" + display_richembeds + "]").prop("checked", true);
         });
-        var localstore_display_richembeds = "";
-        if (localstorage_avaliable) {
+        let localstore_display_richembeds = "";
+        if (localstorage_avalaible) {
             localstore_display_richembeds = localStorage.getItem("display_richembeds");
         }
         if (localstore_display_richembeds) {
-            display_richembeds = !(localstore_display_richembeds == "false");
+            display_richembeds = !(localstore_display_richembeds === "false");
         } else {
             display_richembeds = true;
         }
         $("[name=richembed_toggle_radiobtn][value=" + display_richembeds + "]").prop("checked", true);
         
-        var dembed = discord_embed();
+        let dembed = discord_embed();
         dembed.done(function (data) {
             if (data.instant_invite) {
                 $("#modal_invite_btn").show().attr("href", data.instant_invite);
@@ -622,7 +622,7 @@ var passedCookieTest = true; // If passed cross origin test
                 });
             })
             .mouseup(function () {
-                var wasDragging = is_dragging_chatcontainer;
+                let wasDragging = is_dragging_chatcontainer;
                 is_dragging_chatcontainer = false;
                 $(window).unbind("mousemove");
                 if (!wasDragging) {
@@ -630,13 +630,13 @@ var passedCookieTest = true; // If passed cross origin test
                 }
             });
         
-        var showScrollbar = getParameterByName("lockscrollbar") == "true";
+        let showScrollbar = getParameterByName("lockscrollbar") === "true";
         if (showScrollbar) {
             showScrollbar = 2;
         } else {
             showScrollbar = 0;
         }
-        var scrollbarTheme = getParameterByName("scrollbartheme");
+        let scrollbarTheme = getParameterByName("scrollbartheme");
         if (scrollbarTheme) {
             $("main").mCustomScrollbar({
                 autoHideScrollbar: !showScrollbar,
@@ -658,7 +658,7 @@ var passedCookieTest = true; // If passed cross origin test
     });
     
     function changeNotificationSound(sound) {
-        var soundTypes = ["newmsgs", "mentions", "nothing"];
+        let soundTypes = ["newmsgs", "mentions", "nothing"];
         if ($.inArray(sound, soundTypes) != -1) {
             notification_sound_setting = sound;
             $("[name=notification_sound_radiobtn][value=" + sound + "]").prop("checked", true);
@@ -676,13 +676,13 @@ var passedCookieTest = true; // If passed cross origin test
         if (modifyLocalStore === undefined) {
             modifyLocalStore = true;
         }
-        if (theme == "") {
+        if (theme === "") {
           $("#css-theme").attr("href", "");
           $("#user-defined-css").text(user_def_css);
           if (modifyLocalStore) {
               localStorage.removeItem("theme");
           }
-        } else if ($.inArray(theme, theme_options) != -1 || theme == null) {
+        } else if ($.inArray(theme, theme_options) != -1 || theme === null) {
             if (!keep_custom_css) {
                 $("#user-defined-css").text("");
             } else {
@@ -701,7 +701,7 @@ var passedCookieTest = true; // If passed cross origin test
     function getParameterByName(name, url) {
         if (!url) url = window.location.href;
         name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        let regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
             results = regex.exec(url);
         if (!results) return null;
         if (!results[2]) return '';
@@ -735,16 +735,16 @@ var passedCookieTest = true; // If passed cross origin test
     function primeEmbed() {
         lock_login_fields();
 
-        var guild = query_guild();
+        let guild = query_guild();
         guild.fail(function(data) {
             unlock_login_fields();
-            if (data.status == 403 && getParameterByName("create_authenticated_user") == "true" && getParameterByName("sametarget") == "true") {
+            if (data.status === 403 && getParameterByName("create_authenticated_user") === "true" && getParameterByName("sametarget") === "true") {
                 wait_for_discord_login();
             } else if (!unauth_captcha_enabled && $("#custom_username_field").length !== 0 && $("#custom_username_field").val().trim() !== "") {
                 $("#custom_username_field").trigger(jQuery.Event("keyup", { keyCode: 13 } ));
             } else if (visitors_enabled) {
                 setVisitorMode(true);
-                var guild2 = query_guild();
+                let guild2 = query_guild();
                 guild2.done(function(data) {
                     initialize_embed(data);
                 });
@@ -783,60 +783,30 @@ var passedCookieTest = true; // If passed cross origin test
             socket = null;
         }
         if (guildobj === undefined) {
-            var guild = query_guild();
+            let guild = query_guild();
             guild.done(function(data) {
                 switch_to_default_channel(data.channels);
                 prepare_guild(data);
                 $('#loginmodal').modal('close');
                 unlock_login_fields();
-                setTimeout(displayDblAdvert, 1500);
+                //setTimeout(displayDblAdvert, 1500);
             });
         } else {
             switch_to_default_channel(guildobj.channels);
             prepare_guild(guildobj);
             $('#loginmodal').modal('close');
             unlock_login_fields();
-            setTimeout(displayDblAdvert, 1500);
+            //setTimeout(displayDblAdvert, 1500);
         }
-    }
-    
-    function displayDblAdvert() {
-        var hideDblUntil = "";
-        if (localstorage_avaliable) {
-            hideDblUntil = localStorage.getItem("hideDiscordBotsOrgVoteAdUntil");
-        }
-        var now = moment();
-        var hideDblUntilMoment = null;
-        if (hideDblUntil) {
-            hideDblUntilMoment = moment(hideDblUntil);
-            if (hideDblUntilMoment.isValid() && hideDblUntilMoment > now) {
-                return;
-            }
-        }
-        var dblAdContents = "<i class=\"material-icons right\">close</i></span><span id=\"dblBalloon\"><h6>Loving the Titan, the Discord server widget?</h6><br>Show your appreciation <em>by voting for Titan daily</em> on <a href=\"https://titanembeds.com/vote\" target=\"_blank\">Discord Bot List</a> and get a <span class=\"yellow-text\">golden</span> name and other rewards!";
-        $(".brand-logo").showBalloon({
-            html: true,
-            position: "bottom",
-            contents: dblAdContents,
-            classname: "dblballoon",
-            showComplete: function () {
-                $(".dblballoon").css("top", $(".brand-logo").outerHeight() + "px").css("position", "fixed");
-                $(".dblballoon").find("i").click(function (event) {
-                    event.preventDefault();
-                    $(".brand-logo").hideBalloon();
-                    localStorage.setItem("hideDiscordBotsOrgVoteAdUntil", now.add(3, "days").toISOString());
-                }).css("cursor", "pointer");
-            }
-        });
     }
     
     function switch_to_default_channel(guildchannels) {
-        var defaultChannel = getParameterByName("defaultchannel");
+        let defaultChannel = getParameterByName("defaultchannel");
         if (!defaultChannel) {
             return;
         }
-        for (var i = 0; i < guildchannels.length; i++) {
-            if (guildchannels[i].channel.id == defaultChannel) {
+        for (let i = 0; i < guildchannels.length; i++) {
+            if (guildchannels[i].channel.id === defaultChannel) {
                 if (!guildchannels[i].read) {
                     return;
                 }
@@ -856,23 +826,32 @@ var passedCookieTest = true; // If passed cross origin test
         initiate_websockets();
     }
 
+    function capitalize(word) {
+        if (word.length > 1) {
+            return word.charAt(0).toUpperCase() + word.slice(1)
+        } else {
+            return word.toUpperCase()
+        }
+    }
+
     function fill_channels(channels) {
         guild_channels_list = channels;
-        var template = $('#mustache_channellistings').html();
+        let template = $('#mustache_channellistings').html();
         Mustache.parse(template);
-        var template_category = $('#mustache_channelcategory').html();
+        let template_category = $('#mustache_channelcategory').html();
         Mustache.parse(template_category);
         $("#channels-list").empty();
-        var curr_default_channel = selected_channel;
-        var categories = [{
+
+        let curr_default_channel = selected_channel;
+        let categories = [{
             "channel": {id: null, name: "Uncategorized"},
             "children": [],
             "read": true,
         }];
-        for (var i = 0; i < channels.length; i++) {
-            var chan = channels[i];
+        for (let i = 0; i < channels.length; i++) {
+            let chan = channels[i];
             guild_channels[chan.channel.id] = chan;
-            if (chan.channel.type == "category") {
+            if (chan.channel.type === "category") {
                 chan.children = [];
                 categories.push(chan);
             }
@@ -880,46 +859,46 @@ var passedCookieTest = true; // If passed cross origin test
         categories.sort(function(a, b) {
           return parseInt(a.channel.position) - parseInt(b.channel.position);
         });
-        for (var i = 0; i < channels.length; i++) {
-            var chan = channels[i];
-            if (chan.channel.type == "text") {
-                var cate = chan.channel.parent_id;
-                for (var j = 0; j < categories.length; j++) {
-                    var thiscategory = categories[j];
-                    if (thiscategory.channel.id == cate) {
+        for (let i = 0; i < channels.length; i++) {
+            let chan = channels[i];
+            if (chan.channel.type === "text") {
+                let cate = chan.channel.parent_id;
+                for (let j = 0; j < categories.length; j++) {
+                    let thiscategory = categories[j];
+                    if (thiscategory.channel.id === cate) {
                         thiscategory.children.push(chan);
                         break;
                     }
                 }
             }
         }
-        for (var i = 0; i < categories.length; i++) {
-            var cate = categories[i];
+        for (let i = 0; i < categories.length; i++) {
+            let cate = categories[i];
             cate.read = false;
-            for (var j = 0; j < cate.children.length; j++) {
-                var chan = cate.children[j];
-                if (chan.channel.type == "text" && chan.read) {
+            for (let j = 0; j < cate.children.length; j++) {
+                let chan = cate.children[j];
+                if (chan.channel.type === "text" && chan.read) {
                     cate.read = true;
                     break;
                 }
             }
         }
-        for (var i = 0; i < categories.length; i++) {
-            var cate = categories[i];
-            var children = cate.children;
+        for (let i = 0; i < categories.length; i++) {
+            let cate = categories[i];
+            let children = cate.children;
             children.sort(function(a, b) {
               return parseInt(a.channel.position) - parseInt(b.channel.position);
             });
-            if (i != 0) {
+            if (i !== 0) {
                 if (cate.read) {
-                    var rendered_category = Mustache.render(template_category, {"name": cate.channel.name});
+                    let rendered_category = Mustache.render(template_category, {"name": cate.channel.name});
                     $("#channels-list").append(rendered_category);
                 }
             }
-            for (var j = 0; j < children.length; j++) {
-                var chan = children[j];
+            for (let j = 0; j < children.length; j++) {
+                let chan = children[j];
                 if (chan.read) {
-                    var rendered_channel = Mustache.render(template, {"channelid": chan.channel.id, "channelname": chan.channel.name});
+                    let rendered_channel = Mustache.render(template, {"channelid": chan.channel.id, "channelname": capitalize(chan.channel.name)});
                     $("#channels-list").append(rendered_channel);
                     $("#channel-" + chan.channel.id.toString()).click({"channel_id": chan.channel.id.toString()}, function(event) {
                         select_channel(event.data.channel_id);
@@ -928,10 +907,13 @@ var passedCookieTest = true; // If passed cross origin test
                         curr_default_channel = chan;
                     }
                 }
+                if (chan.channel.id === selected_channel) {
+                    $("#custom-title-with-channel").text(capitalize(categories[i].channel.name) + " > # " + capitalize(chan.channel.name));
+                }
             }
         }
-        if (typeof curr_default_channel == "object") {
-            if (curr_default_channel == null) {
+        if (typeof curr_default_channel === "object") {
+            if (curr_default_channel === null) {
                 $("#messagebox").prop('disabled', true);
                 $("#messagebox").prop('placeholder', "NO TEXT CHANNELS");
                 $("#send-rich-embed-btn").hide();
@@ -942,7 +924,7 @@ var passedCookieTest = true; // If passed cross origin test
             }
             selected_channel = curr_default_channel.channel.id;
         }
-        var this_channel = guild_channels[selected_channel];
+        let this_channel = guild_channels[selected_channel];
         if (this_channel.write) {
             $("#messagebox").prop('disabled', false);
             $("#messagebox").prop('placeholder', "Enter message");
@@ -981,17 +963,17 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function update_emoji_picker() {
-        var emojis = wdtEmojiBundle.listCustomEmojis();
-        var short_names = [];
-        for (var i = 0; i < emojis.length; i++) {
+        let emojis = wdtEmojiBundle.listCustomEmojis();
+        let short_names = [];
+        for (let i = 0; i < emojis.length; i++) {
             short_names.push(emojis.short_name);
         }
-        for (var i = 0; i < short_names.length; i++) {
+        for (let i = 0; i < short_names.length; i++) {
             wdtEmojiBundle.removeCustomEmoji(short_names[i]);
         }
-        for (var i = 0; i < emoji_store.length; i++) {
-            var emote = emoji_store[i];
-            var img_url = "https://cdn.discordapp.com/emojis/" + emote.id;
+        for (let i = 0; i < emoji_store.length; i++) {
+            let emote = emoji_store[i];
+            let img_url = "https://cdn.discordapp.com/emojis/" + emote.id;
             if (emote.animated) {
                 img_url += ".gif";
             } else {
@@ -1003,17 +985,17 @@ var passedCookieTest = true; // If passed cross origin test
 
     function fill_discord_members(discordmembers) {
         if (!discord_users_list_enabled) {
-            if (discordmembers.length == 0 || discordmembers[0].id != 0) {
+            if (discordmembers.length === 0 || discordmembers[0].id != 0) {
                 return;
             }
         }
         discord_users_list = discordmembers;
-        var template = $('#mustache_authedusers').html();
+        let template = $('#mustache_authedusers').html();
         Mustache.parse(template);
         $("#discord-members").empty();
-        var guild_members = {};
-        for (var i = 0; i < discordmembers.length; i++) {
-            var member = discordmembers[i];
+        let guild_members = {};
+        for (let i = 0; i < discordmembers.length; i++) {
+            let member = discordmembers[i];
             if (member["hoist-role"]) {
               if (!(member["hoist-role"]["id"] in guild_members)) {
                 guild_members[member["hoist-role"]["id"]] = {};
@@ -1032,30 +1014,30 @@ var passedCookieTest = true; // If passed cross origin test
               guild_members["0"]["members"].push(member);
             }
         }
-        var guild_members_arr = [];
-        for (var key in guild_members) {
+        let guild_members_arr = [];
+        for (let key in guild_members) {
           guild_members_arr.push(guild_members[key]);
         }
         guild_members_arr.sort(function(a, b) {
           return parseInt(b.position) - parseInt(a.position);
         });
-        var template_role = $('#mustache_memberrole').html();
+        let template_role = $('#mustache_memberrole').html();
         Mustache.parse(template_role);
-        var template_user = $('#mustache_authedusers').html();
+        let template_user = $('#mustache_authedusers').html();
         Mustache.parse(template_user);
         $("#discord-members").empty();
-        var discordmembercnt = 0;
-        for (var i = 0; i < guild_members_arr.length; i++) {
-          var roleobj = guild_members_arr[i];
+        let discordmembercnt = 0;
+        for (let i = 0; i < guild_members_arr.length; i++) {
+          let roleobj = guild_members_arr[i];
           if (!roleobj["name"]) {
             roleobj["name"] = "Uncategorized";
           }
-          var rendered_role = Mustache.render(template_role, {"name": roleobj["name"] + " - " + roleobj["members"].length});
+          let rendered_role = Mustache.render(template_role, {"name": roleobj["name"] + " - " + roleobj["members"].length});
           discordmembercnt += roleobj["members"].length;
           $("#discord-members").append(rendered_role);
           roleobj.members.sort(function(a, b){
-              var name_a = a.username;
-              var name_b = b.username;
+              let name_a = a.username;
+              let name_b = b.username;
               if (a.nick) {
                   name_a = a.nick;
               }
@@ -1068,13 +1050,13 @@ var passedCookieTest = true; // If passed cross origin test
               if(name_a > name_b) return 1;
               return 0;
             });
-          for (var j = 0; j < roleobj.members.length; j++) {
-            var member = roleobj.members[j];
-            var member_name = member.nick;
+          for (let j = 0; j < roleobj.members.length; j++) {
+            let member = roleobj.members[j];
+            let member_name = member.nick;
             if (!member_name) {
                 member_name = member.username;
             }
-            var rendered_user = Mustache.render(template_user, {"id": member.id.toString() + "d", "username": member_name, "avatar": member.avatar_url});
+            let rendered_user = Mustache.render(template_user, {"id": member.id.toString() + "d", "username": member_name, "avatar": member.avatar_url});
             $("#discord-members").append(rendered_user);
             $( "#discorduser-" + member.id.toString() + "d").click({"member_id": member.id.toString()}, function(event) {
               openUserCard(event.data.member_id);
@@ -1088,17 +1070,17 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function fill_authenticated_users(users) {
-        var template = $('#mustache_authedusers').html();
+        let template = $('#mustache_authedusers').html();
         Mustache.parse(template);
         $("#embed-discord-members").empty();
         $("#embed-discord-members-count").html(users.length);
-        for (var i = 0; i < users.length; i++) {
-            var member = users[i];
-            var username = member.username;
+        for (let i = 0; i < users.length; i++) {
+            let member = users[i];
+            let username = member.username;
             if (member.nickname) {
                 username = member.nickname;
             }
-            var rendered = Mustache.render(template, {"id": member.id.toString() + "a", "username": username, "avatar": member.avatar_url});
+            let rendered = Mustache.render(template, {"id": member.id.toString() + "a", "username": username, "avatar": member.avatar_url});
             $("#embed-discord-members").append(rendered);
             $( "#discorduser-" + member.id.toString() + "a").click({"member_id": member.id.toString()}, function(event) {
               openUserCard(event.data.member_id);
@@ -1108,13 +1090,13 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function fill_unauthenticated_users(users) {
-        var template = $('#mustache_unauthedusers').html();
+        let template = $('#mustache_unauthedusers').html();
         Mustache.parse(template);
         $("#embed-unauth-users").empty();
         $("#guest-members-count").html(users.length);
-        for (var i = 0; i < users.length; i++) {
-            var member = users[i];
-            var rendered = Mustache.render(template, {"username": member.username, "discriminator": zeroPad(member.discriminator)});
+        for (let i = 0; i < users.length; i++) {
+            let member = users[i];
+            let rendered = Mustache.render(template, {"username": member.username, "discriminator": zeroPad(member.discriminator)});
             $("#embed-unauth-users").append(rendered);
         }
         unauthenticated_users_list = users;
@@ -1126,20 +1108,20 @@ var passedCookieTest = true; // If passed cross origin test
 
     function _wait_for_discord_login(index) {
         setTimeout(function() {
-            var usr = create_authenticated_user();
+            let usr = create_authenticated_user();
             usr.done(function(data) {
                 setVisitorMode(false);
                 initialize_embed();
                 return;
             });
             usr.fail(function(data) {
-                if (data.status == 403) {
+                if (data.status === 403) {
                     Materialize.toast('Authentication error! You are banned.', 10000);
                     setVisitorMode(true);
-                } else if (data.status == 422) {
-                    if (data.responseJSON.code == 403) {
+                } else if (data.status === 422) {
+                    if (data.responseJSON.code === 403) {
                         Materialize.toast("Attempting to add you into the server store has failed. The bot does not have permissions to create instant invite. Therefore, Discord Login has been disabled.", 10000);
-                    } else if (data.responseJSON.content.code == 30001) { // Maximum number of guilds reached (100)
+                    } else if (data.responseJSON.content.code === 30001) { // Maximum number of guilds reached (100)
                         Materialize.toast("You have reached the 100 servers limit. You may not join more servers.", 10000);
                     } else {
                         Materialize.toast("An unexpected error has occured while attempting to add you into the server.", 10000);
@@ -1152,10 +1134,10 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function openUserCard(user_id) {
-        var usr = api_user(user_id);
+        let usr = api_user(user_id);
         usr.done(function (data) {
-            for (var i = 0; i < badges_options.length; i++) {
-                var badge = badges_options[i];
+            for (let i = 0; i < badges_options.length; i++) {
+                let badge = badges_options[i];
                 if (data.badges.indexOf(badge) != -1) {
                     $("#usercard .badges ." + badge).show();
                 } else {
@@ -1167,24 +1149,24 @@ var passedCookieTest = true; // If passed cross origin test
             $("#usercard .identity .discriminator").text(zeroPad(data.discriminator));
             $("#usercard .identity .discriminator").text(zeroPad(data.discriminator));
             
-            var template = $('#mustache_rolebubble').html();
+            let template = $('#mustache_rolebubble').html();
             Mustache.parse(template);
             data.roles.sort(function(a, b) {
                 return parseFloat(b.position) - parseFloat(a.position);
             });
             $("#usercard .role .roles").empty();
-            var rolecount = 0;
-            for (var j = 0; j < data.roles.length; j++) {
-                var role = data.roles[j];
-                if (role.id == guild_id) {
+            let rolecount = 0;
+            for (let j = 0; j < data.roles.length; j++) {
+                let role = data.roles[j];
+                if (role.id === guild_id) {
                     continue;
                 }
                 rolecount++;
-                var color = null;
+                let color = null;
                 if (role.color) {
                     color = "#" + role.color.toString(16);
                 }
-                var rol = Mustache.render(template, {name: role.name, color: color});
+                let rol = Mustache.render(template, {name: role.name, color: color});
                 $("#usercard .role .roles").append(rol);
             }
             if (rolecount) {
@@ -1203,9 +1185,9 @@ var passedCookieTest = true; // If passed cross origin test
         $("#usercard .offline-text").show();
         $("#usercard .game").hide();
         $("#usercard .bottag").hide();
-        for (var i = 0; i < discord_users_list.length; i++) {
-            var usr = discord_users_list[i];
-            if (usr.id == user_id) {
+        for (let i = 0; i < discord_users_list.length; i++) {
+            let usr = discord_users_list[i];
+            if (usr.id === user_id) {
                 $("#usercard .offline-text").hide();
                 if (usr.bot) {
                     $("#usercard .bottag").show();
@@ -1221,17 +1203,17 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function generatePreviewRichEmbed() {
-        var richembed = generateRichEmbedObjFromModalForm();
-        var rendered = render_embed(richembed);
+        let richembed = generateRichEmbedObjFromModalForm();
+        let rendered = render_embed(richembed);
         $("#richembedmodal-preview").html(rendered);
     }
 
     function genPreviewPopulateRichEmbed() {
         generatePreviewRichEmbed();
-        var richembed = generateRichEmbedObjFromModalForm();
+        let richembed = generateRichEmbedObjFromModalForm();
         $("#richembedmodal-object").val("");
         if (Object.keys(richembed).length > 2) {
-            if (richembed.fields && richembed.fields.length == 0) {
+            if (richembed.fields && richembed.fields.length === 0) {
                 return;
             }
             $("#richembedmodal-object").val(JSON.stringify(richembed));
@@ -1239,17 +1221,17 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function generateRichEmbedObjFromModalForm() {
-        var color = $("#richembedform-color").val();
-        var title = $("#richembedform-title").val();
-        var description = $("#richembedform-description").val();
-        var url = $("#richembedform-url").val();
-        var thumbnailurl = $("#richembedform-thumbnailurl").val();
-        var authorname = $("#richembedform-authorname").val();
-        var authorurl = $("#richembedform-authorurl").val();
-        var authoricon = $("#richembedform-authoricon").val();
-        var footertext = $("#richembedform-footertext").val();
+        let color = $("#richembedform-color").val();
+        let title = $("#richembedform-title").val();
+        let description = $("#richembedform-description").val();
+        let url = $("#richembedform-url").val();
+        let thumbnailurl = $("#richembedform-thumbnailurl").val();
+        let authorname = $("#richembedform-authorname").val();
+        let authorurl = $("#richembedform-authorurl").val();
+        let authoricon = $("#richembedform-authoricon").val();
+        let footertext = $("#richembedform-footertext").val();
 
-        var output = {
+        let output = {
             "type": "rich"
         };
 
@@ -1301,14 +1283,14 @@ var passedCookieTest = true; // If passed cross origin test
             }
         }
 
-        var fieldRows = $("#richembedmodal-fields > .row");
+        let fieldRows = $("#richembedmodal-fields > .row");
         if (fieldRows.length) {
             output["fields"] = [];
         }
-        for (var i = 0; i < Math.min(fieldRows.length, 10); i++) {
-            var fieldRow = $(fieldRows[i]);
-            var fieldName = fieldRow.find("input.name").val().trim();
-            var fieldValue = fieldRow.find("input.value").val().trim();
+        for (let i = 0; i < Math.min(fieldRows.length, 10); i++) {
+            let fieldRow = $(fieldRows[i]);
+            let fieldName = fieldRow.find("input.name").val().trim();
+            let fieldValue = fieldRow.find("input.value").val().trim();
             if (fieldName && fieldValue) {
                 output["fields"].push({
                     "name": fieldName,
@@ -1322,8 +1304,8 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function flashElement(element) {
-        var opacity = element.css("opacity");
-        for (var i = 0; i < 3; i++) {
+        let opacity = element.css("opacity");
+        for (let i = 0; i < 3; i++) {
             element.animate({opacity: 0}, "fast");
             element.animate({opacity: 100}, "fast");
         }
@@ -1344,7 +1326,7 @@ var passedCookieTest = true; // If passed cross origin test
                 }
                 $("#channel-"+channel_id)[0].scrollIntoView({behavior: "smooth"});
                 flashElement($("#channel-"+channel_id));
-                var timeout = 400;
+                let timeout = 400;
                 if ($("#guild-btn").is(":visible")) {
                     timeout = 1000;
                 }
@@ -1365,16 +1347,16 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function replace_message_mentions(message) {
-        var mentions = message.mentions;
-        var template = $('#mustache_discordmention').html();
+        let mentions = message.mentions;
+        let template = $('#mustache_discordmention').html();
         Mustache.parse(template);
-        for (var i = 0; i < mentions.length; i++) {
-            var mention = mentions[i];
-            var username = mention.username;
+        for (let i = 0; i < mentions.length; i++) {
+            let mention = mentions[i];
+            let username = mention.username;
             if (mention.nickname) {
                 username = mention.nickname;
             }
-            var rendered = Mustache.render(template, {"username": username, "discriminator": zeroPad(mention.discriminator)}).trim();
+            let rendered = Mustache.render(template, {"username": username, "discriminator": zeroPad(mention.discriminator)}).trim();
             message.content = message.content.replace(new RegExp("&lt;@" + mention.id + "&gt;", 'g'), rendered);
             message.content = message.content.replace(new RegExp("&lt;@!" + mention.id + "&gt;", 'g'), rendered);
         }
@@ -1385,15 +1367,15 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function parse_role_mention(content) {
-        var template = $("#mustache_rolemention").html();
+        let template = $("#mustache_rolemention").html();
         Mustache.parse(template);
-        for (var i = 0; i < guild_roles_list.length; i++) {
-            var role = guild_roles_list[i];
-            var roleobj = {"rolename": role.name};
+        for (let i = 0; i < guild_roles_list.length; i++) {
+            let role = guild_roles_list[i];
+            let roleobj = {"rolename": role.name};
             if (role.color) {
                 roleobj.color = "#" + role.color.toString(16);
             }
-            var rendered = Mustache.render(template, roleobj).trim();
+            let rendered = Mustache.render(template, roleobj).trim();
             content = content.replace("&lt;@&amp;" + role.id + "&gt;", rendered);
         }
         return content;
@@ -1404,8 +1386,8 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function format_bot_message(message) {
-        if (message.author.id == bot_client_id && (message.content.includes("**") && ( (message.content.includes("<")&&message.content.includes(">")&&!message.content.startsWith("<@")) || (message.content.includes("[") && message.content.includes("]")) ))) {
-            var usernamefield = message.content.substring(getPosition(message.content, "**", 1)+3, getPosition(message.content, "**", 2)-1);
+        if (message.author.id === bot_client_id && (message.content.includes("**") && ( (message.content.includes("<")&&message.content.includes(">")&&!message.content.startsWith("<@")) || (message.content.includes("[") && message.content.includes("]")) ))) {
+            let usernamefield = message.content.substring(getPosition(message.content, "**", 1)+3, getPosition(message.content, "**", 2)-1);
             if (message.content.startsWith("(Titan Dev) ")) {
                 message.content = message.content.substring(usernamefield.length + 18);
             } else {
@@ -1414,8 +1396,8 @@ var passedCookieTest = true; // If passed cross origin test
             message.author.username = usernamefield.split("#")[0];
             message.author.nickname = null;
             message.author.discriminator = usernamefield.split("#")[1];
-        } else if (message.author.bot && message.author.discriminator == "0000" && message.author.username.substring(message.author.username.length-5, message.author.username.length-4) == "#") {
-            var namestr = message.author.username;
+        } else if (message.author.bot && message.author.discriminator === "0000" && message.author.username.substring(message.author.username.length-5, message.author.username.length-4) === "#") {
+            let namestr = message.author.username;
             if (message.content.startsWith("(Titan Dev) ")) {
                 message.author.username = "(Titan Dev) " + namestr.substring(0,namestr.length-5);
                 message.content = message.content.substring(11);
@@ -1428,7 +1410,7 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function parse_message_time(message) {
-        var mome = moment(message.timestamp);
+        let mome = moment(message.timestamp);
         message.formatted_timestamp = mome.toDate().toString();
         message.formatted_time = mome.calendar();
         /*message.formatted_time = mome.format("h:mm A");*/
@@ -1436,8 +1418,8 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function parse_message_attachments(message) {
-        for (var i = 0; i < message.attachments.length; i++) {
-            var attach = "";
+        for (let i = 0; i < message.attachments.length; i++) {
+            let attach = "";
             if (message.content.length != 0) {
                 attach = " ";
             }
@@ -1454,21 +1436,21 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function handle_last_message_mention() {
-        var lastmsg = $("#chatcontent p:last-child");
-        var content = lastmsg.text().toLowerCase();
-        var username_discrim = current_username_discrim.toLowerCase();
+        let lastmsg = $("#chatcontent p:last-child");
+        let content = lastmsg.text().toLowerCase();
+        let username_discrim = current_username_discrim.toLowerCase();
         if (content.includes("@everyone") || content.includes("@here") || content.includes("@" + username_discrim)) {
             lastmsg.addClass( "mentioned" );
         }
     }
     
     function play_notification_sound(type) { // type can be mention or new
-        if (notification_sound_setting == "nothing") {
+        if (notification_sound_setting === "nothing") {
             return;
-        } else if (notification_sound_setting == "mentions" && type != "mention") {
+        } else if (notification_sound_setting === "mentions" && type != "mention") {
             return;
         }
-        if (notification_sound.playState == 0) {
+        if (notification_sound.playState === 0) {
             notification_sound.play();
         }
     }
@@ -1483,35 +1465,35 @@ var passedCookieTest = true; // If passed cross origin test
      }
 
     function nl2br (str, is_xhtml) {   /* http://stackoverflow.com/questions/2919337/jquery-convert-line-breaks-to-br-nl2br-equivalent/ */
-        var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+        let breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
         return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
     }
 
     function parse_channels_in_message(message) {
-        var channelids = Object.keys(guild_channels);
-        for (var i = 0; i < channelids.length; i++) {
-            var pattern = "&lt;#" + channelids[i] + "&gt;";
-            var elem = "<span class=\"channellink\" channelid=\"" + channelids[i] + "\">#" + guild_channels[channelids[i]].channel.name + "</span>";
+        let channelids = Object.keys(guild_channels);
+        for (let i = 0; i < channelids.length; i++) {
+            let pattern = "&lt;#" + channelids[i] + "&gt;";
+            let elem = "<span class=\"channellink\" channelid=\"" + channelids[i] + "\">#" + guild_channels[channelids[i]].channel.name + "</span>";
             message = message.replace(new RegExp(pattern, "g"), elem);
         }
         return message;
     }
     
     function parse_emoji_in_message(message) {
-        var template = $('#mustache_message_emoji').html();
+        let template = $('#mustache_message_emoji').html();
         Mustache.parse(template);
-        for (var i = 0; i < emoji_store.length; i++) {
-            var emoji = emoji_store[i];
-            var emoji_format = "";
+        for (let i = 0; i < emoji_store.length; i++) {
+            let emoji = emoji_store[i];
+            let emoji_format = "";
             if (emoji.animated) {
                 emoji_format = "&lt;a:" + emoji.name + ":" + emoji.id + "&gt;";
             } else {
                 emoji_format = "&lt;:" + emoji.name + ":" + emoji.id + "&gt;";
             }
-            var rendered = Mustache.render(template, {"id": emoji.id, "name": emoji.name, "animated": emoji.animated}).trim();
+            let rendered = Mustache.render(template, {"id": emoji.id, "name": emoji.name, "animated": emoji.animated}).trim();
             message = message.replaceAll(emoji_format, rendered);
         }
-        var rendered = Mustache.render(template, {"id": "$2", "name": "$1"}).trim();
+        let rendered = Mustache.render(template, {"id": "$2", "name": "$1"}).trim();
         message = message.replace(/&lt;:(.*?):(.*?)&gt;/g, rendered);
         rendered = Mustache.render(template, {"id": "$2", "name": "$1", "animated": true}).trim();
         message = message.replace(/&lt;a:(.*?):(.*?)&gt;/g, rendered);
@@ -1531,10 +1513,10 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function parse_message_markdown(text, embed=false) {
-        var geturl_regex = /(\(.*?)?\b((?:https?|ftp|file):\/\/[-a-z0-9+&@#\/%?=~_()|!:,.;]*[-a-z0-9+&@#\/%=~_()|])/ig;
-        var links = text.match(geturl_regex); // temporarily remove urls so markdown won't mark inside of the url
+        let geturl_regex = /(\(.*?)?\b((?:https?|ftp|file):\/\/[-a-z0-9+&@#\/%?=~_()|!:,.;]*[-a-z0-9+&@#\/%=~_()|])/ig;
+        let links = text.match(geturl_regex); // temporarily remove urls so markdown won't mark inside of the url
         if (links) {
-            for (var i = 0; i < links.length; i++) {
+            for (let i = 0; i < links.length; i++) {
                 text = text.replace(links[i], "$LINK"+i+"$");
             }
         }
@@ -1547,7 +1529,7 @@ var passedCookieTest = true; // If passed cross origin test
         text = text.replace(/\`(.*?)\`/g, "<code>$1</code>");
         text = text.replace(/^&gt; (.*?)$/gm, "<span class=\"blockquote\">$1</span>");
         if (links) {
-            for (var i = 0; i < links.length; i++) {
+            for (let i = 0; i < links.length; i++) {
                 text = text.replace("$LINK"+i+"$", links[i]);
             }
         }
@@ -1558,20 +1540,20 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function render_code_highlighting(element) {
-        for (var i = 0; i < element.length; i++) {
-            var elem = $(element[i]);
-            var codetext = elem.text();
-            var splitted = codetext.split("\n");
+        for (let i = 0; i < element.length; i++) {
+            let elem = $(element[i]);
+            let codetext = elem.text();
+            let splitted = codetext.split("\n");
             if (splitted.length > 1) {
-                var firstLine = splitted[0];
+                let firstLine = splitted[0];
                 if (!(/^\s/.test(firstLine))) { // make sure no whitespace at begining
-                    var firstLineSplitted = firstLine.split(/[ ]+/); // split at whitespace
-                    if (firstLineSplitted.length == 1 && firstLineSplitted[0] != "") { // only one token and the token is not empty
-                        var language = firstLineSplitted[0]; // assume token is lang
+                    let firstLineSplitted = firstLine.split(/[ ]+/); // split at whitespace
+                    if (firstLineSplitted.length === 1 && firstLineSplitted[0] != "") { // only one token and the token is not empty
+                        let language = firstLineSplitted[0]; // assume token is lang
                         if (hljs.getLanguage(language)) {
                             splitted.splice(0, 1); // delete first line
-                            var restOfCode = splitted.join("\n");
-                            var highlighted = hljs.highlight(language, restOfCode, true);
+                            let restOfCode = splitted.join("\n");
+                            let highlighted = hljs.highlight(language, restOfCode, true);
                             elem.html(highlighted.value);
                         }
                     }
@@ -1584,7 +1566,7 @@ var passedCookieTest = true; // If passed cross origin test
         if (message_contents === undefined) {
             message_contents = null;
         }
-        if (user_id == bot_client_id && (message_contents.includes("**") && ( (message_contents.includes("<")&&message_contents.includes(">")) || (message_contents.includes("[") && message_contents.includes("]")) ))) {
+        if (user_id === bot_client_id && (message_contents.includes("**") && ( (message_contents.includes("<")&&message_contents.includes(">")) || (message_contents.includes("[") && message_contents.includes("]")) ))) {
             return global_guest_icon;
         } else {
             return "https://cdn.discordapp.com/avatars/" + user_id + "/" + avatar_hash + ".png";
@@ -1592,14 +1574,14 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function parse_message_embeds(embeds) {
-        var emb = [];
+        let emb = [];
         if (display_richembeds) {
-            for (var i = 0; i < embeds.length; i++) {
-                var disembed = embeds[i];
-                // if ($.inArray(disembed.type, ["rich", "link", "video"]) == -1) {
+            for (let i = 0; i < embeds.length; i++) {
+                let disembed = embeds[i];
+                // if ($.inArray(disembed.type, ["rich", "link", "video"]) === -1) {
                 //     continue;
                 // }
-                var rendered = render_embed(disembed);
+                let rendered = render_embed(disembed);
                 emb.push(rendered);
             }
         }
@@ -1607,16 +1589,16 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function render_embed(disembed) {
-        if (disembed.type == "image") {
-            var img = "<img class=\"image attachment materialboxed\" src=\"" + disembed.thumbnail.proxy_url + "\">";
+        if (disembed.type === "image") {
+            let img = "<img class=\"image attachment materialboxed\" src=\"" + disembed.thumbnail.proxy_url + "\">";
             return img;
         }
         
         disembed.isVideo = false;
-        if (disembed.type == "video") {
+        if (disembed.type === "video") {
             disembed.isVideo = true;
             if (disembed.video) {
-                var url = new URL(disembed.video.url);
+                let url = new URL(disembed.video.url);
                 if (url.hostname.endsWith("twitch.tv")) {
                     if (url.searchParams.has("autoplay")) {
                         url.searchParams.set("autoplay", "false");
@@ -1645,14 +1627,14 @@ var passedCookieTest = true; // If passed cross origin test
             disembed.description = render_embed_text_formatting(disembed.description);
         }
         if (disembed.fields) {
-            for (var i = 0; i < disembed.fields.length; i++) {
+            for (let i = 0; i < disembed.fields.length; i++) {
                 disembed.fields[i].name = render_embed_text_formatting(disembed.fields[i].name);
                 disembed.fields[i].value = render_embed_text_formatting(disembed.fields[i].value);
             }
         }
-        var template = $('#mustache_richembed').html();
+        let template = $('#mustache_richembed').html();
         Mustache.parse(template);
-        var rendered = Mustache.render(template, disembed);
+        let rendered = Mustache.render(template, disembed);
         return rendered;
     }
 
@@ -1666,7 +1648,7 @@ var passedCookieTest = true; // If passed cross origin test
         content = parse_emoji_in_message(content);
         content = content.replace(/&lt;https:\/\/(.*?)&gt;/g, "https://$1");
         content = content.replace(/&lt;http:\/\/(.*?)&gt;/g, "http://$1");
-        var el = $("<div></div>").html(content);
+        let el = $("<div></div>").html(content);
         el.linkify({
             target: "_blank"
         });
@@ -1674,12 +1656,12 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function parse_message_reactions(reactions) {
-        var reacts = []
-        var template = $("#mustache_reactionchip").html();
+        let reacts = []
+        let template = $("#mustache_reactionchip").html();
         Mustache.parse(template);
-        for (var i = 0; i < reactions.length; i++) {
-            var disreact = reactions[i];
-            var emoji = disreact.emoji;
+        for (let i = 0; i < reactions.length; i++) {
+            let disreact = reactions[i];
+            let emoji = disreact.emoji;
             if (emoji.id) {
                 disreact.img_url = "https://cdn.discordapp.com/emojis/" + emoji.id;
                 if (emoji.animated) {
@@ -1694,21 +1676,21 @@ var passedCookieTest = true; // If passed cross origin test
                     disreact.img_url = $(twemoji.parse(emoji.name)).attr("src");
                 }
             }
-            var rendered = Mustache.render(template, disreact);
+            let rendered = Mustache.render(template, disreact);
             reacts.push(rendered);
         }
         return reacts;
     }
     
     function scroll_on_dom_update() {
-        var scrollRegion = $(window).height() / 2;
+        let scrollRegion = $(window).height() / 2;
         if (!getParameterByName("scrollbartheme") && $("main").prop("scrollHeight") - ($("main").scrollTop() + $("main").outerHeight()) < scrollRegion) {
             $("main").scrollTop($("#chatcontent").outerHeight());
         }
     }
     
     function format_new_member_message(message) {
-        var formats = [
+        let formats = [
             "{0} just joined the server - glhf!",
             "{0} just joined. Everyone, look busy!",
             "{0} just joined. Can I get a heal?",
@@ -1749,8 +1731,8 @@ var passedCookieTest = true; // If passed cross origin test
             "{0} has joined. Stay a while and listen!",
             "Roses are red, violets are blue, {0} joined this server with you",
         ];
-        var index = moment(message.timestamp).unix() % formats.length;
-        var formatted = formats[index].replace(/\{0\}/g, message.author.username);
+        let index = moment(message.timestamp).unix() % formats.length;
+        let formatted = formats[index].replace(/\{0\}/g, message.author.username);
         return "<i class=\"material-icons new-member-arrow\">arrow_forward</i> " + formatted;
     }
 
@@ -1758,18 +1740,19 @@ var passedCookieTest = true; // If passed cross origin test
         if (replace === undefined) {
             replace = null;
         }
-        if (messages.length == 0) {
+        if (messages.length === 0) {
             return last_message_id;
         }
-        var last = 0;
-        var template = $('#mustache_usermessage').html();
+        let last = 0;
+        let template = $('#mustache_usermessage').html();
         Mustache.parse(template);
-        for (var i = messages.length-1; i >= 0; i--) {
-            var message = messages[i];
+        for (let i = messages.length-1; i >= 0; i--) {
+            let message = messages[i];
+            let avatar;
             if (message.author.avatar) {
-                var avatar = generate_avatar_url(message.author.id, message.author.avatar, message.content);
+                avatar = generate_avatar_url(message.author.id, message.author.avatar, message.content);
             } else {
-                var avatar = global_guest_icon;
+                avatar = global_guest_icon;
             }
             message = format_bot_message(message);
             message = parse_message_time(message);
@@ -1783,22 +1766,22 @@ var passedCookieTest = true; // If passed cross origin test
             message.content = parse_emoji_in_message(message.content);
             message.content = message.content.replace(/&lt;https:\/\/(.*?)&gt;/g, "https://$1");
             message.content = message.content.replace(/&lt;http:\/\/(.*?)&gt;/g, "http://$1");
-            if (message.type == 7) {
+            if (message.type === 7) {
                 message.content = format_new_member_message(message);
             }
-            var username = message.author.username;
+            let username = message.author.username;
             if (message.author.nickname) {
                 username = message.author.nickname;
             }
-            var rendered = Mustache.render(template, {"id": message.id, "full_timestamp": message.formatted_timestamp, "time": message.formatted_time, "username": username, "discriminator": zeroPad(message.author.discriminator), "avatar": avatar, "content": nl2br(message.content)});
-            if (replace == null) {
+            let rendered = Mustache.render(template, {"id": message.id, "full_timestamp": message.formatted_timestamp, "time": message.formatted_time, "username": username, "discriminator": zeroPad(message.author.discriminator), "avatar": avatar, "content": nl2br(message.content)});
+            if (replace === null) {
                 $("#chatcontent").append(rendered);
                 handle_last_message_mention();
                 $("#chatcontent p:last-child").attr("timestamp", message.timestamp);
                 $("#chatcontent p:last-child").find(".blockcode").find("br").remove(); // Remove excessive breaks in codeblocks
                 render_code_highlighting($("#chatcontent p:last-child").find(".blockcode"));
                 $("#chatcontent .chatusername").last().click(function () {
-                    var discordid = $(this).parent().attr("discord_userid");
+                    let discordid = $(this).parent().attr("discord_userid");
                     if (discordid) {
                         openUserCard(discordid);
                     }
@@ -1806,7 +1789,7 @@ var passedCookieTest = true; // If passed cross origin test
                 $("#chatcontent p:last-child").find(".channellink").click(function () {
                     select_channel($(this).attr("channelid"), true);
                 });
-                if (message.type == 7) {
+                if (message.type === 7) {
                     $("#chatcontent p:last-child").addClass("new-member");
                 }
             } else {
@@ -1817,17 +1800,17 @@ var passedCookieTest = true; // If passed cross origin test
                     select_channel($(this).attr("channelid"), true);
                 });
             }
-            var embeds = parse_message_embeds(message.embeds);
+            let embeds = parse_message_embeds(message.embeds);
             $("#discordmessage_"+message.id).parent().find("span.embeds").text("");
-            for(var j = 0; j < embeds.length; j++) {
+            for(let j = 0; j < embeds.length; j++) {
                 $("#discordmessage_"+message.id).parent().find("span.embeds").append(embeds[j]);
             }
-            var reactions = parse_message_reactions(message.reactions);
+            let reactions = parse_message_reactions(message.reactions);
             $("#discordmessage_"+message.id).parent().find("span.reactions").text("");
-            for(var j = 0; j < reactions.length; j++) {
+            for(let j = 0; j < reactions.length; j++) {
                 $("#discordmessage_"+message.id).parent().find("span.reactions").append(reactions[j]);
             }
-            var usrcachekey = username + "#" + message.author.discriminator;
+            let usrcachekey = username + "#" + message.author.discriminator;
             if (usrcachekey.startsWith("(Titan Dev) ")) {
                 usrcachekey = usrcachekey.substr(12);
             }
@@ -1837,14 +1820,14 @@ var passedCookieTest = true; // If passed cross origin test
             message_users_cache[usrcachekey]["msgs"].push(message.id);
             last = message.id;
         }
-        if (replace == null) {
+        if (replace === null) {
             play_notification_sound("new");
         }
         if ($("#chatcontent p:last-child.mentioned").length) {
             play_notification_sound("mention");
         }
         
-        if (replace == null && jumpscroll) {
+        if (replace === null && jumpscroll) {
             if (!has_handled_noscroll) {
                 has_handled_noscroll = true;
                 Materialize.toast('Continue scrolling to read on...', 5000);
@@ -1877,14 +1860,14 @@ var passedCookieTest = true; // If passed cross origin test
     }
 
     function run_fetch_routine() {
-        var channel_id = selected_channel;
-        var fet;
-        var jumpscroll;
-        if (channel_id == null) {
+        let channel_id = selected_channel;
+        let fet;
+        let jumpscroll;
+        if (channel_id === null) {
             return;
         }
         $("#message-spinner").fadeIn();
-        if (last_message_id == null) {
+        if (last_message_id === null) {
             $("#chatcontent").empty();
             fet = fetch(channel_id);
             jumpscroll = true;
@@ -1897,7 +1880,7 @@ var passedCookieTest = true; // If passed cross origin test
         }
         fet.done(function(data) {
             socket_error_should_refetch = false;
-            var status = data.status;
+            let status = data.status;
             if (visitor_mode) {
                 update_embed_userchip(false, null, "Titan", null, "0001", null);
                 update_change_username_modal();
@@ -1912,7 +1895,7 @@ var passedCookieTest = true; // If passed cross origin test
             } else {
                 $("#administrate_link").hide();
             }
-            var guild = query_guild();
+            let guild = query_guild();
             guild.done(function(guildobj) {
                 fill_channels(guildobj.channels);
                 fill_discord_members(guildobj.discordmembers);
@@ -1923,10 +1906,10 @@ var passedCookieTest = true; // If passed cross origin test
             $("#message-spinner").fadeOut();
         });
         fet.fail(function(data) {
-            if (data.status == 403) {
+            if (data.status === 403) {
                 setTimeout(function () {$('#loginmodal').modal('open');}, 2000);
                 Materialize.toast('Authentication error! You have been disconnected by the server.', 10000);
-            } else if (data.status == 401) {
+            } else if (data.status === 401) {
                 setTimeout(function () {$('#loginmodal').modal('open');}, 2000);
                 Materialize.toast('Session expired! You have been logged out.', 10000);
             }
@@ -1936,16 +1919,16 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function process_message_users_cache() {
-        var keys = Object.keys(message_users_cache);
-        for (var i = 0; i < keys.length; i++) {
-            var key = keys[i];
-            var hashpos = key.lastIndexOf("#");
-            var name = key.substring(0, hashpos);
-            var discriminator = key.substring(hashpos+1);
+        let keys = Object.keys(message_users_cache);
+        for (let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            let hashpos = key.lastIndexOf("#");
+            let name = key.substring(0, hashpos);
+            let discriminator = key.substring(hashpos+1);
             if (name.startsWith("(Titan Dev) ")) {
                 name = name.substring(12);
             }
-            var key_helper = name + "#" + discriminator;
+            let key_helper = name + "#" + discriminator;
             if (jQuery.isEmptyObject(message_users_cache[key_helper]["data"])) {
                 if (socket && socket_identified) {
                     socket.emit("lookup_user_info", {"guild_id": guild_id, "name": name, "discriminator": discriminator});
@@ -1958,10 +1941,10 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function process_message_users_cache_helper(key, usr) {
-        var msgs = message_users_cache[key]["msgs"];
+        let msgs = message_users_cache[key]["msgs"];
         while (msgs.length > 0) {
-            var element = $("#discordmessage_"+msgs.pop());
-            var parent = element.parent();
+            let element = $("#discordmessage_"+msgs.pop());
+            let parent = element.parent();
             if (usr.color) {
                 parent.find(".chatusername").css("color", "#"+usr.color);
             } else {
@@ -1982,11 +1965,11 @@ var passedCookieTest = true; // If passed cross origin test
     }
     
     function collapse_messages() {
-        var allMessages = $('[id^="discordmessage_"]').parent();
-        for (var i = 1; i < allMessages.length; i++) {
-            var last = $(allMessages[i - 1]);
-            var current = $(allMessages[i]);
-            if (!last.hasClass("new-member") && last.attr("discord_userid") == current.attr("discord_userid") && current.attr("discord_userid") && moment(current.attr("timestamp")).isSame(moment(last.attr("timestamp")), "hour")) {
+        let allMessages = $('[id^="discordmessage_"]').parent();
+        for (let i = 1; i < allMessages.length; i++) {
+            let last = $(allMessages[i - 1]);
+            let current = $(allMessages[i]);
+            if (!last.hasClass("new-member") && last.attr("discord_userid") === current.attr("discord_userid") && current.attr("discord_userid") && moment(current.attr("timestamp")).isSame(moment(last.attr("timestamp")), "hour")) {
                 current.addClass("collapsed");
             } else {
                 current.removeClass("collapsed");
@@ -2038,7 +2021,7 @@ var passedCookieTest = true; // If passed cross origin test
 
     $("#discordlogin_btn").click(function(e) {
         e.preventDefault();
-        var wid = window.open($("#discordlogin_btn").attr("href"), "_blank");
+        let wid = window.open($("#discordlogin_btn").attr("href"), "_blank");
         postRobot.on("setSession", { window: wid }, function(event) {
             if (!passedCookieTest) {
                 session = event.data.session;
@@ -2049,7 +2032,7 @@ var passedCookieTest = true; // If passed cross origin test
     });
     
     $("#custom_username_field").keyup(function(event){
-        if (event.keyCode == 13) {
+        if (event.keyCode === 13) {
             do_guest_login();
         }
     });
@@ -2075,20 +2058,20 @@ var passedCookieTest = true; // If passed cross origin test
 
     $("#submit-unauthenticated-captcha-btn").click(function(){
         lock_login_fields();
-        var usr = create_unauthenticated_user($("#custom_username_field").val(), grecaptcha.getResponse());
+        let usr = create_unauthenticated_user($("#custom_username_field").val(), grecaptcha.getResponse());
         usr.done(function(data) {
             grecaptcha.reset();
             setVisitorMode(false);
             initialize_embed();
         });
         usr.fail(function(data) {
-            if (data.status == 429) {
+            if (data.status === 429) {
                 Materialize.toast('Sorry! You are allowed to log in as a guest three times in a span of 30 minutes.', 10000);
-            } else if (data.status == 403) {
+            } else if (data.status === 403) {
                 Materialize.toast('Authentication error! You have been banned.', 10000);
-            } else if (data.status == 406) {
+            } else if (data.status === 406) {
                 Materialize.toast('Illegal username provided! Only alphanumeric, spaces, dashes, and underscores allowed in usernames.', 10000);
-            } else if (data.status == 412) {
+            } else if (data.status === 412) {
                 Materialize.toast("reCAPTCHA reponse has failed. Try again?", 10000);
             }
             unlock_login_fields();
@@ -2097,14 +2080,14 @@ var passedCookieTest = true; // If passed cross origin test
     });
     
     $("#change_username_field").keyup(function(event){
-        if (event.keyCode == 13) {
+        if (event.keyCode === 13) {
             $(this).blur();
             if (!(new RegExp(/^[a-z\d\-_\s]+$/i).test($(this).val()))) {
                 Materialize.toast('Illegal username provided! Only alphanumeric, spaces, dashes, and underscores allowed in usernames.', 10000);
                 return;
             }
             if(($(this).val().length >= 2 && $(this).val().length <= 32) && $("#curuser_name").text() != $(this).val()) {
-                var usr = change_unauthenticated_username($(this).val());
+                let usr = change_unauthenticated_username($(this).val());
                 usr.done(function(data) {
                     Materialize.toast('Username changed successfully!', 10000);
                     if (socket) {
@@ -2115,11 +2098,11 @@ var passedCookieTest = true; // If passed cross origin test
                     initiate_websockets();
                 });
                 usr.fail(function(data) {
-                    if (data.status == 429) {
+                    if (data.status === 429) {
                         Materialize.toast('Sorry! You are allowed to change your username once every 10 minutes.', 10000);
-                    } else if (data.status == 403) {
+                    } else if (data.status === 403) {
                         Materialize.toast('Authentication error! You have been banned.', 10000);
-                    } else if (data.status == 406) {
+                    } else if (data.status === 406) {
                         Materialize.toast('Illegal username provided! Only alphanumeric, spaces, dashes, and underscores allowed in usernames.', 10000);
                     } else {
                         Materialize.toast('Something unexpected happened! Error code of ' + data.status, 10000);
@@ -2130,7 +2113,7 @@ var passedCookieTest = true; // If passed cross origin test
     });
     
     function stringToDefaultEmote(input) {
-        var map = {
+        let map = {
             "<3": "\u2764\uFE0F",
             "</3": "\uD83D\uDC94",
             ":D": "\uD83D\uDE00",
@@ -2141,10 +2124,10 @@ var passedCookieTest = true; // If passed cross origin test
             ";p": "\uD83D\uDE1C",
             ":'(": "\uD83D\uDE22"
         };
-        for (var i in map) {
-            var escaped = i.replace(/([()[{*+.$^\\|?])/g, '\\$1');
+        for (let i in map) {
+            let escaped = i.replace(/([()[{*+.$^\\|?])/g, '\\$1');
             escaped = "(\\s|^)(" + escaped + ")(\\s|$)";
-            var regex = new RegExp(escaped, 'gim');
+            let regex = new RegExp(escaped, 'gim');
             input = input.replace(regex, "$1" + map[i] + "$3");
         }
         return input;
@@ -2160,13 +2143,13 @@ var passedCookieTest = true; // If passed cross origin test
     });
     
     $('#messagebox').bind('input keydown click', function(event) {
-        if (event.type == "keydown" && (event.which == 38 || event.which == 40 || event.which == 13) && $("#mention-picker").is(":visible")) {
+        if (event.type === "keydown" && (event.which === 38 || event.which === 40 || event.which === 13) && $("#mention-picker").is(":visible")) {
             return;
         }
-        var cursorAt = $(this).caret();
-        var input = $(this).val().substr(0, cursorAt);
-        var lastWord = input.match(/@\w+$/);
-        if (lastWord == null) {
+        let cursorAt = $(this).caret();
+        let input = $(this).val().substr(0, cursorAt);
+        let lastWord = input.match(/@\w+$/);
+        if (lastWord === null) {
             $("#mention-picker").hide();
             return;
         }
@@ -2176,19 +2159,19 @@ var passedCookieTest = true; // If passed cross origin test
             return;
         }
         lastWord = lastWord.substr(1);
-        if (all_users.length == 0) {
-            var usrs = list_users();
+        if (all_users.length === 0) {
+            let usrs = list_users();
             usrs.done(function (lst) {
                 all_users = lst;
             });
         }
-        var template = $('#mustache_usermentionchoices').html();
+        let template = $('#mustache_usermentionchoices').html();
         Mustache.parse(template);
-        var users = [];
-        for (var i = 0; i < all_users.length; i++) {
-            var usr = all_users[i];
+        let users = [];
+        for (let i = 0; i < all_users.length; i++) {
+            let usr = all_users[i];
             if (usr.username.toLowerCase().indexOf(lastWord.toLowerCase()) > -1 || (usr.nickname && usr.nickname.toLowerCase().indexOf(lastWord.toLowerCase()) > -1)) {
-                var displayname = usr.username;
+                let displayname = usr.username;
                 if (usr.nickname) {
                     displayname = usr.nickname;
                 }
@@ -2201,22 +2184,22 @@ var passedCookieTest = true; // If passed cross origin test
                 });
             }
         }
-        if (users.length == 0) {
+        if (users.length === 0) {
             $("#mention-picker").hide();
             return;
         }
         $("#mention-picker").show();
         $("#mention-picker-content").html("");
-        for (var i = 0; i < users.length; i++) {
-            var usr = users[i];
-            var rendered = $(Mustache.render(template, usr));
+        for (let i = 0; i < users.length; i++) {
+            let usr = users[i];
+            let rendered = $(Mustache.render(template, usr));
             rendered.hover(function () {
                 $("#mention-picker .mention-choice.selected").removeClass("selected");
                 $(this).addClass("selected");
             });
             rendered.click(function () {
-                var usrid = $(this).attr("discorduserid");
-                var val = $("#messagebox").val().replace("@" + lastWord, "[@" + usrid + "] ");
+                let usrid = $(this).attr("discorduserid");
+                let val = $("#messagebox").val().replace("@" + lastWord, "[@" + usrid + "] ");
                 $("#messagebox").val(val);
                 $("#mention-picker").hide();
                 $("#messagebox").focus();
@@ -2228,27 +2211,27 @@ var passedCookieTest = true; // If passed cross origin test
     });
     
     $("#messagebox").keyup(function (event) {
-        if (event.keyCode == 16) {
+        if (event.keyCode === 16) {
             shift_pressed = false;
         }
     });
 
     $("#messagebox").keydown(function(event){
         if ($("#mention-picker").is(":visible")) {
-            if ((event.which == 38 || event.which == 40)) {
+            if ((event.which === 38 || event.which === 40)) {
                 event.preventDefault();
-                var choices = $("#mention-picker .mention-choice");
-                var selected = $("#mention-picker .mention-choice.selected");
-                var index = choices.index(selected);
+                let choices = $("#mention-picker .mention-choice");
+                let selected = $("#mention-picker .mention-choice.selected");
+                let index = choices.index(selected);
                 selected.removeClass("selected");
-                if (event.which == 40) {
-                    if (index == choices.length - 1) {
+                if (event.which === 40) {
+                    if (index === choices.length - 1) {
                         $(choices.get(0)).addClass("selected");
                     } else {
                         $(choices.get(index + 1)).addClass("selected");
                     }
                 } else {
-                    if (index == 0) {
+                    if (index === 0) {
                         $(choices.get(choices.length - 1)).addClass("selected");
                     } else {
                         $(choices.get(index - 1)).addClass("selected");
@@ -2257,24 +2240,24 @@ var passedCookieTest = true; // If passed cross origin test
                 $("#mention-picker .mention-choice.selected")[0].scrollIntoView({behavior: "instant", block: "center", inline: "center"});
                 return;
             }
-            if (event.which == 13) {
+            if (event.which === 13) {
                 event.preventDefault();
                 $("#mention-picker .mention-choice.selected").click();
                 return;
             }
-            if (event.which == 27) {
+            if (event.which === 27) {
                 $("#mention-picker").hide();
             }
         }
         
         
-        if ($(this).val().length == 1) {
+        if ($(this).val().length === 1) {
             $(this).val($.trim($(this).val()));
         }
-        if (event.keyCode == 16) {
+        if (event.keyCode === 16) {
             shift_pressed = true;
         }
-        if(event.keyCode == 13 && !shift_pressed && ($(this).val().length >= 1 || $("#fileinput").val().length >= 1 || $("#richembedmodal-object").val().length >= 1)) {
+        if(event.keyCode === 13 && !shift_pressed && ($(this).val().length >= 1 || $("#fileinput").val().length >= 1 || $("#richembedmodal-object").val().length >= 1)) {
             $(this).val($.trim($(this).val()));
             $(this).blur();
             $("#messagebox-richembedmodal").attr('readonly', true);
@@ -2284,22 +2267,22 @@ var passedCookieTest = true; // If passed cross origin test
             $("#messagebox").attr('readonly', true);
             $("#richembedmodal-left input").attr('readonly', true);
             $("#send-msg-btn").attr("disabled", true);
-            var emojiConvertor = new EmojiConvertor();
+            let emojiConvertor = new EmojiConvertor();
             emojiConvertor.init_env();
             emojiConvertor.replace_mode = "unified";
             emojiConvertor.allow_native = true;
-            var messageInput = emojiConvertor.replace_colons($(this).val());
+            let messageInput = emojiConvertor.replace_colons($(this).val());
             messageInput = stringToDefaultEmote(messageInput);
-            var file = null;
+            let file = null;
             if ($("#fileinput")[0].files.length > 0) {
                 file = $("#fileinput")[0].files[0];
             }
             $("#filemodalprogress").show();
-            var richembed = $("#richembedmodal-object").val();
+            let richembed = $("#richembedmodal-object").val();
             if (!richembed) {
                 richembed = null;
             }
-            var funct = post(selected_channel, messageInput, file, richembed);
+            let funct = post(selected_channel, messageInput, file, richembed);
             funct.done(function(data) {
                 $("#messagebox").val("");
                 $("#messagebox-filemodal").val("");
@@ -2311,15 +2294,15 @@ var passedCookieTest = true; // If passed cross origin test
             funct.fail(function(data) {
                 Materialize.toast('Failed to send message.', 10000);
                 if (data.responseJSON) {
-                    for (var i = 0; i < data.responseJSON.illegal_reasons.length; i++) {
+                    for (let i = 0; i < data.responseJSON.illegal_reasons.length; i++) {
                         Materialize.toast(data.responseJSON.illegal_reasons[i], 10000);
                     }
                 }
             });
             funct.catch(function(data) {
-                if (data.status == 429) {
+                if (data.status === 429) {
                     Materialize.toast('You are sending messages too fast! 1 message per ' + post_timeout + ' seconds', 10000);
-                } else if (data.status == 413) {
+                } else if (data.status === 413) {
                     Materialize.toast('Your file is too powerful! The maximum file size is 4 megabytes.', 5000);
                 }
             });
@@ -2342,20 +2325,20 @@ var passedCookieTest = true; // If passed cross origin test
     });
     
     $("#messagebox-filemodal").keyup(function (event) {
-        if (event.keyCode == 16) {
+        if (event.keyCode === 16) {
             shift_pressed = false;
         }
     });
     
     $("#messagebox-filemodal").keydown(function (event) {
-        if ($(this).val().length == 1) {
+        if ($(this).val().length === 1) {
             $(this).val($.trim($(this).val()));
         }
-        if (event.keyCode == 16) {
+        if (event.keyCode === 16) {
             shift_pressed = true;
         }
         
-        if(event.keyCode == 13 && !shift_pressed) {
+        if(event.keyCode === 13 && !shift_pressed) {
             $(this).val($.trim($(this).val()));
             $(this).blur();
             $("#messagebox").val($(this).val());
@@ -2364,20 +2347,20 @@ var passedCookieTest = true; // If passed cross origin test
     });
 
     $("#messagebox-richembedmodal").keyup(function (event) {
-        if (event.keyCode == 16) {
+        if (event.keyCode === 16) {
             shift_pressed = false;
         }
     });
     
     $("#messagebox-richembedmodal").keydown(function (event) {
-        if ($(this).val().length == 1) {
+        if ($(this).val().length === 1) {
             $(this).val($.trim($(this).val()));
         }
-        if (event.keyCode == 16) {
+        if (event.keyCode === 16) {
             shift_pressed = true;
         }
         
-        if(event.keyCode == 13 && !shift_pressed) {
+        if(event.keyCode === 13 && !shift_pressed) {
             $(this).val($.trim($(this).val()));
             $(this).blur();
             $("#messagebox").val($(this).val());
@@ -2405,12 +2388,6 @@ var passedCookieTest = true; // If passed cross origin test
     }
     );
     
-    // enter konami code into the embed page for some ponies action!
-    cheet('↑ ↑ ↓ ↓ ← → ← → b a', function () {
-        // basically copied and pasted of browser ponies bookmarklet
-        (function (srcs,cfg) { var cbcount = 1; var callback = function () { -- cbcount; if (cbcount === 0) { BrowserPonies.setBaseUrl(cfg.baseurl); if (!BrowserPoniesBaseConfig.loaded) { BrowserPonies.loadConfig(BrowserPoniesBaseConfig); BrowserPoniesBaseConfig.loaded = true; } BrowserPonies.loadConfig(cfg); if (!BrowserPonies.running()) BrowserPonies.start(); } }; if (typeof(BrowserPoniesConfig) === "undefined") { window.BrowserPoniesConfig = {}; } if (typeof(BrowserPoniesBaseConfig) === "undefined") { ++ cbcount; BrowserPoniesConfig.onbasecfg = callback; } if (typeof(BrowserPonies) === "undefined") { ++ cbcount; BrowserPoniesConfig.oninit = callback; } var node = (document.body || document.documentElement || document.getElementsByTagName('head')[0]); for (var id in srcs) { if (document.getElementById(id)) continue; if (node) { var s = document.createElement('script'); s.type = 'text/javascript'; s.id = id; s.src = srcs[id]; node.appendChild(s); } else { document.write('\u003cscript type="text/javscript" src="'+ srcs[id]+'" id="'+id+'"\u003e\u003c/script\u003e'); } } callback();})({"browser-ponies-script":"https://panzi.github.io/Browser-Ponies/browserponies.js","browser-ponies-config":"https://panzi.github.io/Browser-Ponies/basecfg.js"},{"baseurl":"https://panzi.github.io/Browser-Ponies/","fadeDuration":500,"volume":1,"fps":25,"speed":3,"audioEnabled":false,"showFps":false,"showLoadProgress":true,"speakProbability":0.1,"spawn":{"applejack":1,"fluttershy":1,"pinkie pie":1,"rainbow dash":1,"rarity":1,"twilight sparkle":1}});
-    });
-    
     function initiate_websockets() {
         if (socket || !shouldUtilizeGateway) {
             return;
@@ -2418,7 +2395,7 @@ var passedCookieTest = true; // If passed cross origin test
         
         socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + "/gateway", {path: '/gateway', transports: ['websocket'], query: "v=1"});
         socket.on('connect', function () {
-            var sen = {"guild_id": guild_id, "visitor_mode": visitor_mode};
+            let sen = {"guild_id": guild_id, "visitor_mode": visitor_mode};
             if (!passedCookieTest && session) {
                 sen["session"] = session;
             }
@@ -2426,7 +2403,7 @@ var passedCookieTest = true; // If passed cross origin test
         });
 
         socket.on('hello', function (msg) {
-            var gateway_identifier = msg.gateway_identifier;
+            let gateway_identifier = msg.gateway_identifier;
             if (!gateway_identifier) {
                 gateway_identifier = "null";
             }
@@ -2452,18 +2429,18 @@ var passedCookieTest = true; // If passed cross origin test
         
         socket.on("embed_user_connect", function (msg) {
             if (msg.unauthenticated) {
-                for (var i = 0; i < unauthenticated_users_list.length; i++) {
-                    var item = unauthenticated_users_list[i];
-                    if (item.username == msg.username && item.discriminator == msg.discriminator) {
+                for (let i = 0; i < unauthenticated_users_list.length; i++) {
+                    let item = unauthenticated_users_list[i];
+                    if (item.username === msg.username && item.discriminator === msg.discriminator) {
                         return;
                     }
                 }
                 unauthenticated_users_list.push(msg);
                 fill_unauthenticated_users(unauthenticated_users_list);
             } else {
-                for (var i = 0; i < authenticated_users_list.length; i++) {
-                    var item = authenticated_users_list[i];
-                    if (item.id == msg.id) {
+                for (let i = 0; i < authenticated_users_list.length; i++) {
+                    let item = authenticated_users_list[i];
+                    if (item.id === msg.id) {
                         return;
                     }
                 }
@@ -2474,18 +2451,18 @@ var passedCookieTest = true; // If passed cross origin test
         
         socket.on("embed_user_disconnect", function (msg) {
             if (msg.unauthenticated) {
-                for (var i = 0; i < unauthenticated_users_list.length; i++) {
-                    var item = unauthenticated_users_list[i];
-                    if (item.username == msg.username && item.discriminator == msg.discriminator) {
+                for (let i = 0; i < unauthenticated_users_list.length; i++) {
+                    let item = unauthenticated_users_list[i];
+                    if (item.username === msg.username && item.discriminator === msg.discriminator) {
                         unauthenticated_users_list.splice(i, 1);
                         fill_unauthenticated_users(unauthenticated_users_list);
                         return;
                     }
                 }
             } else {
-                for (var i = 0; i < authenticated_users_list.length; i++) {
-                    var item = authenticated_users_list[i];
-                    if (item.id == msg.id) {
+                for (let i = 0; i < authenticated_users_list.length; i++) {
+                    let item = authenticated_users_list[i];
+                    if (item.id === msg.id) {
                         authenticated_users_list.splice(i, 1);
                         fill_authenticated_users(authenticated_users_list);
                         return;
@@ -2495,11 +2472,11 @@ var passedCookieTest = true; // If passed cross origin test
         });
         
         socket.on("MESSAGE_CREATE", function (msg) {
-            var thismsgchan = msg.channel_id;
-            if (selected_channel != thismsgchan) {
+            let thismsgchan = msg.channel_id;
+            if (selected_channel !== thismsgchan) {
                 return;
             }
-            var jumpscroll = false;
+            let jumpscroll = false;
             if (last_message_id) {
                 jumpscroll = element_in_view($('#discordmessage_'+last_message_id).parent());
             }
@@ -2507,12 +2484,12 @@ var passedCookieTest = true; // If passed cross origin test
         });
         
         socket.on("MESSAGE_DELETE", function (msg) {
-            var msgchan = msg.channel_id;
-            if (selected_channel != msgchan) {
+            let msgchan = msg.channel_id;
+            if (selected_channel !== msgchan) {
                 return;
             }
             $("#discordmessage_"+msg.id).parent().remove();
-            var lastelem = $("#chatcontent").find("[id^=discordmessage_]");
+            let lastelem = $("#chatcontent").find("[id^=discordmessage_]");
             if (lastelem.length) {
                 last_message_id = lastelem.last().attr('id').substring(15);
             } else {
@@ -2521,38 +2498,38 @@ var passedCookieTest = true; // If passed cross origin test
         });
         
         socket.on("MESSAGE_UPDATE", function (msg) {
-            var msgelem = $("#discordmessage_"+msg.id);
-            if (msgelem.length == 0) {
+            let msgelem = $("#discordmessage_"+msg.id);
+            if (msgelem.length === 0) {
                 return;
             }
-            var msgelem_parent = msgelem.parent();
+            let msgelem_parent = msgelem.parent();
             fill_discord_messages([msg], false, msgelem_parent);
         });
         
         socket.on("MESSAGE_REACTION_ADD", function (msg) {
-            var msgelem = $("#discordmessage_"+msg.id);
-            if (msgelem.length == 0) {
+            let msgelem = $("#discordmessage_"+msg.id);
+            if (msgelem.length === 0) {
                 return;
             }
-            var msgelem_parent = msgelem.parent();
+            let msgelem_parent = msgelem.parent();
             fill_discord_messages([msg], false, msgelem_parent);
         });
         
         socket.on("MESSAGE_REACTION_REMOVE", function (msg) {
-            var msgelem = $("#discordmessage_"+msg.id);
-            if (msgelem.length == 0) {
+            let msgelem = $("#discordmessage_"+msg.id);
+            if (msgelem.length === 0) {
                 return;
             }
-            var msgelem_parent = msgelem.parent();
+            let msgelem_parent = msgelem.parent();
             fill_discord_messages([msg], false, msgelem_parent);
         });
         
         socket.on("MESSAGE_REACTION_REMOVE_ALL", function (msg) {
-            var msgelem = $("#discordmessage_"+msg.id);
-            if (msgelem.length == 0) {
+            let msgelem = $("#discordmessage_"+msg.id);
+            if (msgelem.length === 0) {
                 return;
             }
-            var msgelem_parent = msgelem.parent();
+            let msgelem_parent = msgelem.parent();
             fill_discord_messages([msg], false, msgelem_parent);
         });
         
@@ -2561,7 +2538,7 @@ var passedCookieTest = true; // If passed cross origin test
                 discord_users_list.push(usr);
                 fill_discord_members(discord_users_list);
             }
-            if (all_users.length == 0) {
+            if (all_users.length === 0) {
                 return;
             }
             all_users.push({
@@ -2575,14 +2552,14 @@ var passedCookieTest = true; // If passed cross origin test
         });
         
         socket.on("GUILD_MEMBER_UPDATE", function (usr) {
-            if (usr.id == current_user_discord_id) {
+            if (usr.id === current_user_discord_id) {
                 update_socket_channels();
                 socket.emit("current_user_info", {"guild_id": guild_id});
             }
-            var updatedUser = false;
-            for (var i = 0; i < all_users.length; i++) {
-                if (usr.id == all_users[i].id) {
-                    var u = all_users[i];
+            let updatedUser = false;
+            for (let i = 0; i < all_users.length; i++) {
+                if (usr.id === all_users[i].id) {
+                    let u = all_users[i];
                     u.avatar = usr.avatar;
                     u.avatar_url = generate_avatar_url(usr.id, usr.avatar);
                     u.username = usr.username;
@@ -2592,8 +2569,8 @@ var passedCookieTest = true; // If passed cross origin test
                     break;
                 }
             }
-            for (var i = 0; i < discord_users_list.length; i++) {
-                if (usr.id == discord_users_list[i].id) {
+            for (let i = 0; i < discord_users_list.length; i++) {
+                if (usr.id === discord_users_list[i].id) {
                     discord_users_list.splice(i, 1);
                     if (usr.status != "offline") {
                         discord_users_list.push(usr);
@@ -2617,14 +2594,14 @@ var passedCookieTest = true; // If passed cross origin test
         });
 
         socket.on("GUILD_MEMBER_REMOVE", function (usr) {
-            for (var i = 0; i < all_users.length; i++) {
-                if (usr.id == all_users[i].id) {
+            for (let i = 0; i < all_users.length; i++) {
+                if (usr.id === all_users[i].id) {
                     all_users.splice(i, 1);
                     break;
                 }
             }
-            for (var i = 0; i < discord_users_list.length; i++) {
-                if (usr.id == discord_users_list[i].id) {
+            for (let i = 0; i < discord_users_list.length; i++) {
+                if (usr.id === discord_users_list[i].id) {
                     discord_users_list.splice(i, 1);
                     fill_discord_members(discord_users_list);
                     break;
@@ -2648,9 +2625,9 @@ var passedCookieTest = true; // If passed cross origin test
         });
         
         socket.on("CHANNEL_DELETE", function (chan) {
-            for (var i = 0; i < guild_channels_list.length; i++) {
-                var thatchannel = guild_channels_list[i];
-                if (thatchannel.channel.id == chan.id) {
+            for (let i = 0; i < guild_channels_list.length; i++) {
+                let thatchannel = guild_channels_list[i];
+                if (thatchannel.channel.id === chan.id) {
                     guild_channels_list.splice(i, 1);
                     fill_channels(guild_channels_list);
                     return;
@@ -2673,8 +2650,8 @@ var passedCookieTest = true; // If passed cross origin test
         
         socket.on("GUILD_ROLE_UPDATE", function (role) {
             update_socket_channels();
-            for (var i = 0; i < guild_roles_list.length; i++) {
-                if (guild_roles_list[i].id == role.id) {
+            for (let i = 0; i < guild_roles_list.length; i++) {
+                if (guild_roles_list[i].id === role.id) {
                     guild_roles_list.splice(i, 1);
                     guild_roles_list.push(role);
                     return;
@@ -2684,8 +2661,8 @@ var passedCookieTest = true; // If passed cross origin test
         
         socket.on("GUILD_ROLE_DELETE", function (role) {
             update_socket_channels();
-            for (var i = 0; i < guild_roles_list.length; i++) {
-                if (guild_roles_list[i].id == role.id) {
+            for (let i = 0; i < guild_roles_list.length; i++) {
+                if (guild_roles_list[i].id === role.id) {
                     guild_roles_list.splice(i, 1);
                     return;
                 }
@@ -2694,9 +2671,9 @@ var passedCookieTest = true; // If passed cross origin test
         
         socket.on("channel_list", function (chans) {
             fill_channels(chans);
-            for (var i = 0; i < chans.length; i++) {
-                var thischan = chans[i];
-                if (thischan.channel.id == selected_channel) {
+            for (let i = 0; i < chans.length; i++) {
+                let thischan = chans[i];
+                if (thischan.channel.id === selected_channel) {
                     $("#channeltopic").text(thischan.channel.topic);
                 }
             }
@@ -2707,8 +2684,8 @@ var passedCookieTest = true; // If passed cross origin test
         });
         
         socket.on("lookup_user_info", function (usr) {
-            var key = usr.name + "#" + usr.discriminator;
-            var cache = message_users_cache[key];
+            let key = usr.name + "#" + usr.discriminator;
+            let cache = message_users_cache[key];
             if (!cache) {
                 return;
             }
@@ -2737,8 +2714,8 @@ var passedCookieTest = true; // If passed cross origin test
     
     function send_socket_heartbeat() {
         if (socket_last_ack) {
-            var now = moment();
-            var duration = moment.duration(now.diff(socket_last_ack)).minutes();
+            let now = moment();
+            let duration = moment.duration(now.diff(socket_last_ack)).minutes();
             if (socket && duration >= 1) { // server must hanged, lets reconnect
                 socket_error_should_refetch = true;
                 socket.disconnect();
@@ -2760,7 +2737,7 @@ function submit_unauthenticated_captcha() { // To be invoked when recaptcha is c
 
 window._3rd_party_test_step1_loaded = function () {
     // At this point, a third-party domain has now attempted to set a cookie (if all went to plan!)
-    var step2El = document.createElement('script');
+    let step2El = document.createElement('script');
     // And load the second part of the test (reading the cookie)
     step2El.setAttribute('src', cookie_test_s2_URL);
     document.getElementById("third-party-cookies-notice").appendChild(step2El);
@@ -2781,7 +2758,7 @@ window._3rd_party_test_step2_loaded = function (cookieSuccess) {
 };
 
 window.setTimeout(function(){
-    var noticeDiv = $("#third-party-cookies-notice");
+    let noticeDiv = $("#third-party-cookies-notice");
     if (!noticeDiv.hasClass("done")) {
         window._3rd_party_test_step2_loaded(false);
     }

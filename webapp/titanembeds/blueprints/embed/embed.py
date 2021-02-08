@@ -13,14 +13,7 @@ embed = Blueprint("embed", __name__)
 
 def get_logingreeting():
     greetings = [
-        gettext("Let's get to know each other! My name is Titan, what's yours?"),
-        gettext("Hello and welcome!"),
-        gettext("What brings you here today?"),
-        gettext("....what do you expect this text to say?"),
-        gettext("Aha! ..made you look!"),
-        gettext("Initiating launch sequence..."),
-        gettext("Captain, what's your option?"),
-        gettext("Alright, here's the usual~"),
+        gettext("Welcome to Beasts of Wanderia!")
     ]
     return random.choice(greetings)
 
